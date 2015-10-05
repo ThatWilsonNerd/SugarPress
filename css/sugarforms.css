@@ -1,0 +1,9 @@
+.ui-icon {
+	width: 16px;
+	height: 16px;
+    background-position: 16px 16px;
+	background-image: sugarforms.css;
+}
+.ui-icon-arrowthick-1-n { background-position: 0 -48px; }
+.ui-icon-arrowthick-1-s { background-position: -64px -48px; }
+.ui-icon-trash { background-position: -176px -96px; }
