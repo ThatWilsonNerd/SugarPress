@@ -3,7 +3,7 @@
 Plugin Name: SugarPress
 Plugin URI: http://www.wilsonlabs.net
 Description: SugarPress is a seamless and modular integration of Sugar CRM into WordPress. 
-Version: 2.0.0a
+Version: 2.0a
 Author: Will Wilson
 Author URI: http://www.wilsonlabs.net
 License: GPLv2 or later
@@ -58,10 +58,10 @@ License: GPLv2 or later
             global $sugar_icon;
 			$capability = 'manage_options';
 			//	create main page
-			add_menu_page( 'SugarPress', 'SugarPress', $capability, 'sugarpress-menu', 'sugarpress_main', $sugar_icon,104);
+			//add_menu_page( 'SugarPress', 'SugarPress', $capability, 'sugarpress-menu', 'sugarpress_main', $sugar_icon,104);
             
             //	SugarCRM Settings Page
-			$settings_page = add_submenu_page('sugarpress-menu', 'SugarCRM Settings', 'SugarCRM Settings', $capability, 'sugarpress-menu', 'sugarpress_main');
+			$settings_page = add_submenu_page('edit.php?post_type=sugarform', 'SugarCRM Settings', 'SugarCRM Settings', $capability, 'sugarpress-menu', 'sugarpress_main');
             
             
 		}
