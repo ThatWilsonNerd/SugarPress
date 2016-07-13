@@ -8,7 +8,7 @@
             $sugar_url = get_option('sugar_url');
             $sugar_user = get_option('sugar_user');
             $sugar_pwd = get_option('sugar_pwd');
-            $api = new SugarREST($sugar_url,$sugar_user,$sugar_pwd,true);
+            $api = new SugarREST($sugar_url,$sugar_user,$sugar_pwd,false);
             return $api->loggedIn();
         }
     }

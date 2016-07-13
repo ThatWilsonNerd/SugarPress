@@ -20,7 +20,7 @@
     }
     ?>
 <p>Connection Status:
-    <?php echo (sugarpress_status() ? "<span style='font-weight:bold;color:green'>Connected</span>":"<span style='font-weight:bold;color:red'>Not Connected</span>");?>
+    <?php echo '';//(sugarpress_status() ? "<span style='font-weight:bold;color:green'>Connected</span>":"<span style='font-weight:bold;color:red'>Not Connected</span>");?>
     </p>
 <hr/>
 <p style="font-weight: bold">Use the settings below to connect WordPress to SugarCRM:</p>
@@ -32,7 +32,7 @@
         <label>Sugar User ID:</label><br/>
         <input type="text" name="sugar_user" value="<?php echo $sugar_user; ?>" /><br/>
         <label>Sugar User Password:</label><br/>
-        <input type="text" name="sugar_pwd" value="<?php echo $sugar_pwd; ?>"/>
+        <input type="password" name="sugar_pwd" value="<?php echo $sugar_pwd; ?>"/>
     </div>
     <input type="submit" value="Save"/>
 </form>
@@ -44,7 +44,7 @@
 </form>
 <?php
     //  test our credentials
-    //$api = new SugarREST($sugar_url,$sugar_user,$sugar_pwd,false);
+    $api = new SugarREST($sugar_url,$sugar_user,$sugar_pwd,true);
     
-    //$api->getModules(true);
+    $api->getModules(true);
 ?>
