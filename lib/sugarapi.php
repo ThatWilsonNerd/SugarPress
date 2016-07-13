@@ -186,6 +186,10 @@
             $result = curl_exec($curl_request);
             curl_close($curl_request);
 
+            if($this->debug) {
+                print_r($result);
+            }
+
             if ($returnHeaders){
                 //set headers from response
                 list($headers, $content) = explode("\r\n\r\n", $result ,2);

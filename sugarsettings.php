@@ -46,5 +46,5 @@
     //  test our credentials
     $api = new SugarREST($sugar_url,$sugar_user,$sugar_pwd,true);
     
-    $api->getModules(true);
+    //$api->getModules(true);
 ?>
