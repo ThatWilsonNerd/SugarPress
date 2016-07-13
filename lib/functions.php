@@ -8,7 +8,7 @@
             $sugar_url = get_option('sugar_url');
             $sugar_user = get_option('sugar_user');
             $sugar_pwd = get_option('sugar_pwd');
-            $api = new SugarREST($sugar_url,$sugar_user,$sugar_pwd,false);
+            $api = new SugarREST($sugar_url,$sugar_user,$sugar_pwd,true);
             return $api->loggedIn();
         }
     }
@@ -16,123 +16,6 @@
     //  override the wordpress authentication function
     if(get_option('sp_enable_login') == 1) {
         add_filter('authenticate','sugarportal_authenticate',10,3);
-    }
-    if(!function_exists('sugarportal_authenticate')) {
-        function sugarportal_authenticate($user, $username, $password) {
-            if($username == '' || $password == '') return;
-            $sugar_auth = sugarportal_login($username,$password);
-            $userobj = new WP_User();
-
-            if($sugar_auth->valid == 1) {
-                //  user is authenticated, look up WP user record by login
-                $sp_login_id = get_option('sp_login_id');
-                $sp_login_pwd = get_option('sp_login_pwd');
-                $sp_login_email = get_option('sp_login_email');
-                $sp_login_fname = get_option('sp_login_fname');
-                $sp_login_lname = get_option('sp_login_lname');
-                $sp_sync_field1 = get_option('sp_sync_field1');
-                
-                $user = $userobj->get_data_by( 'login', $sugar_auth->user->$sp_login_id );
-                print_r($user);
-                $user = new WP_User($user->ID);
-                if( $user->ID == 0 ) {
-                    $userdata = array( 'user_email' => $sugar_auth->user->$sp_login_email,
-                                'user_login' => $sugar_auth->user->$sp_login_id,
-                                'first_name' => $sugar_auth->user->$sp_login_fname,
-                                'last_name' => $sugar_auth->user->$sp_login_lname
-                                );
-                    $new_user_id = wp_insert_user( $userdata ); // A new user has been created
-                    //  update user meta (flag user as a 'portal' user for dashboard purposes)
-                    update_user_meta( $new_user_id,'sp_portal_user', true );
-                    
-                    //  additional fields
-                    
-
-                    // Load the new user info
-                    $user = new WP_User ($new_user_id);
-                }
-            }
-            //  disable built-in user authentication (we can fall back on this if needed)
-            if(get_option('sp_disable_wp_login')==1) {
-                remove_action('authenticate', 'wp_authenticate_username_password', 20);
-            }
-            return $user;
-        }
-    }
-    
-    //  redirect sugarportal users to custom landing page
-    if(!function_exists('sugarportal_landing_redirect')) {
-        function sugarportal_landing_redirect($redirect_to, $request, $user) {
-            //is there a user to check?
-            global $user;
-            if ( isset( $user->roles ) && is_array( $user->roles ) ) {
-                //check for admins
-                if ( in_array( 'administrator', $user->roles ) ) {
-                    // redirect them to the default place
-                    return $redirect_to;
-                } else {
-                    //  check for sugarportal user, redirect to landing page if specified
-                    if(get_user_meta($user->ID,'sp_portal_user',true) == true) {
-                        if(get_option('sp_landing_page') != '' && get_option('sp_landing_page') != 0) {
-                            return get_permalink(get_option('sp_landing_page'),false);
-                        }
-                        else {
-                            return home_url();
-                        }
-                    }
-                }
-            } else {
-                return $redirect_to;
-            }
-        }
-    }
-    if(get_option('sugarportal_installed') == true) {
-        add_filter('login_redirect','sugarportal_landing_redirect',10,3);
-    }
-    
-    //  query Sugar REST API for contact info
-    if(!function_exists('sugarportal_login')) {
-        function sugarportal_login($user, $pwd) {
-            //require_once($sugarapi);
-            $sugar_url = get_option('sugar_url');
-            $sugar_user = get_option('sugar_user');
-            $sugar_pwd = get_option('sugar_pwd');
-            $sp_login_module = get_option('sp_login_module');
-            $sp_login_id = get_option('sp_login_id');
-            $sp_login_pwd = get_option('sp_login_pwd');
-            $sp_login_email = get_option('sp_login_email');
-            $sp_login_fname = get_option('sp_login_fname');
-            $sp_login_lname = get_option('sp_login_lname');
-            $sp_sync_field1 = get_option('sp_sync_field1');
-            
-            //  build our query
-            $request = array(
-                "filter" => array(
-                    array( "$sp_login_id" => $user )
-                ),
-                "max_num"=>1,
-                "offset"=>0,
-                "fields"=>"id,$sp_login_id,$sp_login_pwd,$sp_login_email,$sp_login_fname,$sp_login_lname,$sp_sync_field1",
-            );
-            
-            //  call the api
-            $api = new SugarREST($sugar_url,$sugar_user,$sugar_pwd,false);
-            $response = $api->filter($sp_login_module, $request);
-
-            //  check the password
-            $sugar_auth = new stdClass();
-            if(property_exists($response,'records') && count($response->records)>0 && ($pwd == $response->records[0]->$sp_login_pwd)) {
-                //  success!
-                $sugar_auth->valid = 1;
-                $sugar_auth->user = $response->records[0];
-            }
-            else {
-                //  invalid user/pwd combo
-                $sugar_auth->valid = 0;
-                $sugar_auth->message = "Invalid user/password combination";
-            }
-            return $sugar_auth;
-        }
     }
     
     //  get sugar metadata

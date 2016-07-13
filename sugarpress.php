@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: SugarPress
+Plugin Name: SugarForms
 Plugin URI: http://www.wilsonlabs.net
-Description: SugarPress is a seamless and modular integration of Sugar CRM into WordPress. 
+Description: SugarForms is a simple form-to-Sugar WordPress integration. 
 Version: 2.0a
 Author: Will Wilson
 Author URI: http://www.wilsonlabs.net
@@ -48,43 +48,25 @@ License: GPLv2 or later
         return $items;
     }
     add_filter('wp_get_nav_menu_items','sugarforms_menu_items');
-    
 
     
     //  create admin menu
     add_action('admin_menu', 'sugarpress_admin');
     function sugarpress_admin() {
 		if(function_exists('add_menu_page')) {
-            global $sugar_icon;
 			$capability = 'manage_options';
-			//	create main page
-			//add_menu_page( 'SugarPress', 'SugarPress', $capability, 'sugarpress-menu', 'sugarpress_main', $sugar_icon,104);
-            
             //	SugarCRM Settings Page
-			$settings_page = add_submenu_page('edit.php?post_type=sugarform', 'SugarCRM Settings', 'SugarCRM Settings', $capability, 'sugarpress-menu', 'sugarpress_main');
-            
-            
+			$settings_page = add_submenu_page('edit.php?post_type=sugarform', 'SugarCRM Settings', 'SugarCRM Settings', $capability, 'sugarpress-menu', 'sugarsettings');
 		}
 	}
 
-    function sugarpress_main() {
-		sugarsettings();
-	}
-
-    
     function sugarsettings() {
      if (!current_user_can('manage_options'))  {
 			wp_die( __('You do not have sufficient permissions to access this page.') );
 		}
 		include('sugarsettings.php');
     }
-    function eg_setting_section_callback_function() {
-        echo 'new settings!';
-    }
 
     //  include shortcodes
     include('shortcodes.php');
-
-    
-    //remove_filter('the_content', 'wpautop');
 ?>

@@ -28,7 +28,7 @@
     <?php settings_fields('sugarpress_settings');  ?>
     <div>
         <label>SugarCRM REST Endpoint:</label><br/>
-        <input type="text" name="sugar_url" placeholder="http://sugar-server/rest/v10" size="50" value="<?php echo $sugar_url; ?>"/><br/>
+        <input type="text" name="sugar_url" placeholder="http://sugar-server/service/v4_1/rest.php" size="50" value="<?php echo $sugar_url; ?>"/><br/>
         <label>Sugar User ID:</label><br/>
         <input type="text" name="sugar_user" value="<?php echo $sugar_user; ?>" /><br/>
         <label>Sugar User Password:</label><br/>
