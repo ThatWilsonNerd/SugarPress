@@ -13,6 +13,9 @@
         private $user;
         private $pwd;
         private $debug = false;
+        private $session_id;
+
+
         private $oauthtoken = '';
         private $error = false;
         private $error_msg = '';
@@ -29,7 +32,27 @@
         function baseUrl() { return $this->url; }
     
         function login($debug = false) {
-            $url = $this->url . "/oauth2/token";
+            $login_parameters = array(
+                "user_auth" => array(
+                    "user_name" => $username,
+                    "password" => md5($password),
+                    "version" => "1"
+                ),
+                "application_name" => "RestTest",
+                "name_value_list" => array(),
+            );
+
+            $login_result = call("login", $login_parameters, $this->url);
+
+            if($debug || $this-debug) {
+                echo "<pre>";
+                print_r($login_result);
+                echo "</pre>";
+            }
+            //get session id
+            $this->session_id = $login_result->id;
+            return $this-session_id;
+            /*$url = $this->url . "/oauth2/token";
 
             $oauth2_token_request = array(
                 "grant_type" => "password",
@@ -63,7 +86,7 @@
             else {
                 //  save access token
                 $this->oauthtoken = $oauth2_token_response->access_token;
-            }
+            }*/
 
         }
         
@@ -142,6 +165,38 @@
         }
     
         //function to make cURL request
+        function call($method, $parameters, $url) {
+            ob_start();
+            $curl_request = curl_init();
+
+            curl_setopt($curl_request, CURLOPT_URL, $url);
+            curl_setopt($curl_request, CURLOPT_POST, 1);
+            curl_setopt($curl_request, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
+            curl_setopt($curl_request, CURLOPT_HEADER, 1);
+            curl_setopt($curl_request, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_setopt($curl_request, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curl_request, CURLOPT_FOLLOWLOCATION, 0);
+
+            $jsonEncodedData = json_encode($parameters);
+
+            $post = array(
+                "method" => $method,
+                "input_type" => "JSON",
+                "response_type" => "JSON",
+                "rest_data" => $jsonEncodedData
+            );
+
+            curl_setopt($curl_request, CURLOPT_POSTFIELDS, $post);
+            $result = curl_exec($curl_request);
+            curl_close($curl_request);
+
+            $result = explode("\r\n\r\n", $result, 2);
+            $response = json_decode($result[1]);
+            ob_end_flush();
+
+            return $response;
+        }
+        /*
         function call($url, $type='GET', $arguments=array(), $encodeData=true, $returnHeaders=false) {
             $type = strtoupper($type);
 
@@ -204,7 +259,8 @@
             $response = json_decode($result);
             return $response;
         }
-        
+        */
+
         function create_record($module, $data, $debug=false) {
             $url = $this->url ."/$module";
             $response = $this->call($url,'POST',$data);
