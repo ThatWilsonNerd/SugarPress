@@ -38,7 +38,7 @@
                     "password" => md5($this->pwd),
                     "version" => "1"
                 ),
-                "application_name" => "RestTest",
+                "application" => "SugarForms",
                 "name_value_list" => array(),
             );
 
@@ -52,42 +52,6 @@
             //get session id
             $this->session_id = $login_result->id;
             return $this->session_id;
-            /*$url = $this->url . "/oauth2/token";
-
-            $oauth2_token_request = array(
-                "grant_type" => "password",
-                //client id/secret you created in Admin > OAuth Keys
-                "client_id" => "sugar",
-                "client_secret" => "",
-                "username" => $this->user,
-                "password" => $this->pwd,
-                "platform" => "sugarpress"
-            );
-
-            if($debug || $this->debug) {
-                echo "<pre>";
-                print_r($oauth2_token_request);
-                echo "</pre>";
-            }
-
-            $oauth2_token_response = $this->call($url, 'POST', $oauth2_token_request);
-            
-            if($debug || $this->debug) {
-                echo "<pre>";
-                print_r($oauth2_token_response);
-                echo "</pre>";
-            }
-            
-            //  catch errors
-            if(property_exists($oauth2_token_response,'error')) {
-                $this->error = true;
-                $this->error_msg = 'Login Failed.';//    ?
-            }
-            else {
-                //  save access token
-                $this->oauthtoken = $oauth2_token_response->access_token;
-            }*/
-
         }
         
         function loggedIn() {
@@ -95,9 +59,10 @@
         }
         
         function logout($debug = false) {
-            $url = $this->url . "/oauth2/logout";
-            
-            $response = $this->call($url,'POST');
+            $logout_parameters = array(
+                "session" => $this->session_id
+            );
+            $response = $this->call("logout",$logout_parameters, $this->url);
             if($debug || $this->debug) {
                 echo "<pre>";
                 print_r($response);
