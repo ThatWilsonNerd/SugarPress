@@ -34,24 +34,24 @@
         function login($debug = false) {
             $login_parameters = array(
                 "user_auth" => array(
-                    "user_name" => $username,
-                    "password" => md5($password),
+                    "user_name" => $this->user,
+                    "password" => md5($this->pwd),
                     "version" => "1"
                 ),
                 "application_name" => "RestTest",
                 "name_value_list" => array(),
             );
 
-            $login_result = call("login", $login_parameters, $this->url);
+            $login_result = $this->call("login", $login_parameters, $this->url);
 
-            if($debug || $this-debug) {
+            if($debug || $this->debug) {
                 echo "<pre>";
                 print_r($login_result);
                 echo "</pre>";
             }
             //get session id
             $this->session_id = $login_result->id;
-            return $this-session_id;
+            return $this->session_id;
             /*$url = $this->url . "/oauth2/token";
 
             $oauth2_token_request = array(
@@ -91,7 +91,7 @@
         }
         
         function loggedIn() {
-            return ($this->oauthtoken != '');
+            return ($this->session_id != '');
         }
         
         function logout($debug = false) {
