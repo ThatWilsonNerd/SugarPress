@@ -101,7 +101,7 @@
                 $key = $module->module_key;
                 if(!in_array($key,$this->moduleIgnoreList())) {
                     $modules->$key = new stdClass();
-                    modules->$key->label = $module->module_label;
+                    $modules->$key->label = $module->module_label;
                     //	get module fields
                     $fields = $this->rest("get_module_fields",array("session"=>$this->session_id, "module"=>$key),$this->url);
                     //print_r($fields);
