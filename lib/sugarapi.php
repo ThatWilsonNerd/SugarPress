@@ -42,7 +42,7 @@
                 "name_value_list" => array(),
             );
 
-            $login_result = $this->call("login", $login_parameters, $this->url);
+            $login_result = $this->rest("login", $login_parameters, $this->url);
 
             if($debug || $this->debug) {
                 echo "<pre>";
@@ -62,7 +62,7 @@
             $logout_parameters = array(
                 "session" => $this->session_id
             );
-            $response = $this->call("logout",$logout_parameters, $this->url);
+            $response = $this->rest("logout",$logout_parameters, $this->url);
             if($debug || $this->debug) {
                 echo "<pre>";
                 print_r($response);
@@ -90,25 +90,26 @@
         }
         
         function getModules($debug = false) {
-            $url = $this->url ."/metadata";
-            $request = array();
-            $response = $this->call($url,'GET',$request);
+            $request = array(
+		"session" => $this->session_id,
+		"filter" => "default"
+);
+            $response = $this->rest("get_available_modules",$request,$this->url);
+	//print_r($response);
             $modules = new stdClass();
-            foreach($response->modules as $key=>$value) {
-                //  skip certain modules
+            foreach($response->modules as $module) {
+        	//print_r($module);  
+	      //  skip certain modules
+		$key = $module->module_key;
                 if(!in_array($key,$this->moduleIgnoreList())) {
-                    $fields = array();
-                    foreach($value as $k=>$v) {
-                        if($k=="fields") {
-                            foreach($v as $f=>$o) {
-                                $fields[] = $f;
-                            }
-                        }
-                    }
                     $modules->$key = new stdClass();
-                    $modules->$key->fields = $fields;
+		    $modules->$key->label = $module->module_label;
+ 		    //	get module fields
+		    $fields = $this->rest("get_module_fields",array("session"=>$this->session_id, "module"=>$key),$this->url);
+			//print_r($fields);
+		$modules->$key->fields = $fields;
                 }
-            }            
+            }
             if($debug || $this->debug) {
                 echo "<pre>";
                 print_r($modules);
@@ -130,7 +131,7 @@
         }
     
         //function to make cURL request
-        function call($method, $parameters, $url) {
+        function rest($method, $parameters, $url) {
             ob_start();
             $curl_request = curl_init();
 
@@ -154,7 +155,6 @@
             curl_setopt($curl_request, CURLOPT_POSTFIELDS, $post);
             $result = curl_exec($curl_request);
             curl_close($curl_request);
-
             $result = explode("\r\n\r\n", $result, 2);
             $response = json_decode($result[1]);
             ob_end_flush();
