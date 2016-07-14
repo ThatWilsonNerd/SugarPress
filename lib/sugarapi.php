@@ -95,19 +95,17 @@
 		"filter" => "default"
 );
             $response = $this->rest("get_available_modules",$request,$this->url);
-	//print_r($response);
             $modules = new stdClass();
             foreach($response->modules as $module) {
-        	//print_r($module);  
-	      //  skip certain modules
-		$key = $module->module_key;
+	            //  skip certain modules
+                $key = $module->module_key;
                 if(!in_array($key,$this->moduleIgnoreList())) {
                     $modules->$key = new stdClass();
-		    $modules->$key->label = $module->module_label;
- 		    //	get module fields
-		    $fields = $this->rest("get_module_fields",array("session"=>$this->session_id, "module"=>$key),$this->url);
-			//print_r($fields);
-		$modules->$key->fields = $fields;
+                    modules->$key->label = $module->module_label;
+                    //	get module fields
+                    $fields = $this->rest("get_module_fields",array("session"=>$this->session_id, "module"=>$key),$this->url);
+                    //print_r($fields);
+                    $modules->$key->fields = $fields;
                 }
             }
             if($debug || $this->debug) {
@@ -119,15 +117,15 @@
         }
         
         function getUsers($debug = false) {
-            $url = $this->url ."/Users";
-            $request = array();
-            $response = $this->call($url,'GET',$request);
+
+            $users = $this->rest("get_entries",array("session"=>$this->session_id, "module"=>"Users"),$this->url);
+
             if($debug || $this->debug) {
                 echo "<pre>";
-                print_r($response->records);
+                print_r($users);
                 echo "</pre>";
             }
-            return $response->records;
+            return array(); //$response->records;
         }
     
         //function to make cURL request
@@ -161,6 +159,7 @@
 
             return $response;
         }
+
         /*
         function call($url, $type='GET', $arguments=array(), $encodeData=true, $returnHeaders=false) {
             $type = strtoupper($type);
