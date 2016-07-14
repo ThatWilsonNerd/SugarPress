@@ -64,9 +64,10 @@
             $user_meta = array();
             foreach($users as $user) {
                 $u = new stdClass();
+		//print_r($user->name_value_list->user_name);
                 $u->id =$user->id;
-                $u->user_name = $user->user_name;
-                $u->full_name = $user->full_name;
+                $u->user_name = $user->name_value_list->user_name->value;
+                $u->full_name = $user->name_value_list->full_name->value;
                 $user_meta[] = $u;
             }
             //print_r($user_meta);

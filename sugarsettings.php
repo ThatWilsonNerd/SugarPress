@@ -44,7 +44,8 @@
 </form>
 <?php
     //  test our credentials
-    $api = new SugarREST($sugar_url,$sugar_user,$sugar_pwd,false);
+  //  $api = new SugarREST($sugar_url,$sugar_user,$sugar_pwd,false);
     
-    $api->getModules(true);
+    //$api->getModules(true);
+//	$api->getUsers(true);
 ?>

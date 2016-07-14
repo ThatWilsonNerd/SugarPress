@@ -118,14 +118,14 @@
         
         function getUsers($debug = false) {
 
-            $users = $this->rest("get_entries",array("session"=>$this->session_id, "module"=>"Users"),$this->url);
+            $users = $this->rest("get_entry_list",array("session"=>$this->session_id, "module"=>"Users"),$this->url);
 
             if($debug || $this->debug) {
                 echo "<pre>";
                 print_r($users);
                 echo "</pre>";
             }
-            return array(); //$response->records;
+            return $users->entry_list;
         }
     
         //function to make cURL request
