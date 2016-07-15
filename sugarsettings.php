@@ -48,4 +48,5 @@
     
     //$api->getModules(true);
 //	$api->getUsers(true);
+echo get_option("sugarpress_metadata");
 ?>

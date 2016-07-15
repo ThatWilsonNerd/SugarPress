@@ -16,7 +16,6 @@
         private $session_id;
 
 
-        private $oauthtoken = '';
         private $error = false;
         private $error_msg = '';
         
@@ -105,7 +104,9 @@
                     //	get module fields
                     $fields = $this->rest("get_module_fields",array("session"=>$this->session_id, "module"=>$key),$this->url);
                     //print_r($fields);
-                    $modules->$key->fields = $fields;
+			if(property_exists($fields, 'module_fields')) {
+                    $modules->$key->fields = $fields->module_fields;
+}
                 }
             }
             if($debug || $this->debug) {

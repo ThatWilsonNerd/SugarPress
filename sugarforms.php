@@ -229,7 +229,7 @@
             var self = this;
             self.modules = ko.observableArray([]);
             self.selectedModule = ko.observable();
-            self.moduleFields = ko.computed(function() {return (self.selectedModule() ? self.selectedModule().fields.fields : {});},self);
+            self.moduleFields = ko.computed(function() {return (self.selectedModule() ? function() { var fields=[]; for(var f in self.selectedModule().fields.fields) { fields.push(f); } return fields;}() : {});},self);
             for(var prop in module_metadata) {m={module:prop,fields:module_metadata[prop]};self.modules.push(m);if(prop=='".$sugar_module."') {self.selectedModule(m);}}
             self.fieldTypes = ko.observableArray(['text','email','number','select','multi-select','radio','checkbox','checkbox group','date','textarea','heading','file','password','url']);
             self.fields = ko.observableArray();
