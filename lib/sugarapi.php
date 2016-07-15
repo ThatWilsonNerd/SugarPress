@@ -227,11 +227,16 @@
         */
 
         function create_record($module, $data, $debug=false) {
-            $url = $this->url ."/$module";
-            $response = $this->call($url,'POST',$data);
+            $params = array(
+                "session"=>$this->session_id,
+                "module_name"=>"",
+                "name_value_list"=> array()
+            );
+            $response = $this->rest("set_entry",$params,$this->url);
+
             if($debug || $this->debug) {
                 echo "<pre>";
-                print_r($response->id);
+                print_r($response);
                 echo "</pre>";
             }
             return $response->id;
