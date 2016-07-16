@@ -229,11 +229,10 @@
         function create_record($module, $data, $debug=false) {
             $params = array(
                 "session"=>$this->session_id,
-                "module_name"=>"",
-                "name_value_list"=> array()
+                "module_name"=> $module,
+                "name_value_list"=> $data
             );
             $response = $this->rest("set_entry",$params,$this->url);
-
             if($debug || $this->debug) {
                 echo "<pre>";
                 print_r($response);
